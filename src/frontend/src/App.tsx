@@ -109,7 +109,7 @@ function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:block">
             <a
-              href="mailto:mytch.dellima@gmail.com"
+              href="mailto:sales.binbuddyinc@outlook.com"
               data-ocid="nav.primary_button"
             >
               <Button className="rounded-full bg-brand-blue text-white hover:bg-brand-blue-dark font-semibold px-6 shadow-brand-sm">
@@ -154,7 +154,7 @@ function Navbar() {
                 </a>
               ))}
               <a
-                href="mailto:mytch.dellima@gmail.com"
+                href="mailto:sales.binbuddyinc@outlook.com"
                 onClick={() => setMobileOpen(false)}
                 data-ocid="nav.primary_button"
               >
@@ -816,7 +816,7 @@ function ContactSection() {
               </a>
 
               <a
-                href="mailto:mytch.dellima@gmail.com"
+                href="mailto:sales.binbuddyinc@outlook.com"
                 className="flex items-center gap-4 group"
                 data-ocid="contact.email_link"
               >
@@ -828,7 +828,7 @@ function ContactSection() {
                     Email
                   </div>
                   <div className="font-semibold text-lg group-hover:text-brand-green-light transition-colors">
-                    mytch.dellima@gmail.com
+                    sales.binbuddyinc@outlook.com
                   </div>
                 </div>
               </a>
@@ -1012,7 +1012,7 @@ function ContactSection() {
                       <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
                       <span>
                         Something went wrong. Please try again or email us
-                        directly at mytch.dellima@gmail.com.
+                        directly at sales.binbuddyinc@outlook.com.
                       </span>
                     </motion.div>
                   )}
@@ -1115,12 +1115,12 @@ function Footer() {
                 28992283610
               </a>
               <a
-                href="mailto:mytch.dellima@gmail.com"
+                href="mailto:sales.binbuddyinc@outlook.com"
                 className="flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm"
                 data-ocid="footer.email_link"
               >
                 <Mail size={14} />
-                mytch.dellima@gmail.com
+                sales.binbuddyinc@outlook.com
               </a>
             </div>
           </div>
