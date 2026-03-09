@@ -517,7 +517,7 @@ function PricingSection() {
   const plans = [
     {
       name: "Per Clean",
-      price: "$20",
+      price: "$30",
       unit: "/ bin",
       desc: "Pay as you go. Perfect for one-time or occasional cleanings with no commitment required.",
       features: [
