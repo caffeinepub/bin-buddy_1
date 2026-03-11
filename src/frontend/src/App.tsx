@@ -1,9 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useActor } from "@/hooks/useActor";
-import { useMutation } from "@tanstack/react-query";
 import {
   AlertCircle,
   Building2,
@@ -26,7 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 // ─── Sparkle SVG Decorator ──────────────────────────────────────────────────
 function SparkleIcon({ className }: { className?: string }) {
@@ -717,37 +712,29 @@ function PricingSection() {
 
 // ─── Contact Section ─────────────────────────────────────────────────────────
 function ContactSection() {
-  const { actor } = useActor();
-  const [name, setName] = useState("");
-  const [property, setProperty] = useState("");
-  const [message, setMessage] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const mutation = useMutation({
-    mutationFn: async ({
-      name,
-      property,
-      message,
-    }: {
-      name: string;
-      property: string;
-      message: string;
-    }) => {
-      if (!actor) throw new Error("Service unavailable");
-      await actor.submitContactForm(name, property, message);
-    },
-    onSuccess: () => {
-      setName("");
-      setProperty("");
-      setMessage("");
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !property.trim() || !message.trim()) return;
-    mutation.mutate({ name, property, message });
-  };
+  useEffect(() => {
+    const w = "https://tally.so/widgets/embed.js";
+    const loadEmbeds = () => {
+      if (typeof (window as any).Tally !== "undefined") {
+        (window as any).Tally.loadEmbeds();
+      } else {
+        for (const el of document.querySelectorAll(
+          "iframe[data-tally-src]:not([src])",
+        )) {
+          (el as HTMLIFrameElement).src = (el as HTMLElement).dataset.tallySrc!;
+        }
+      }
+    };
+    if (typeof (window as any).Tally !== "undefined") {
+      loadEmbeds();
+    } else if (!document.querySelector(`script[src="${w}"]`)) {
+      const s = document.createElement("script");
+      s.src = w;
+      s.onload = loadEmbeds;
+      s.onerror = loadEmbeds;
+      document.body.appendChild(s);
+    }
+  }, []);
 
   return (
     <section
@@ -891,133 +878,30 @@ function ContactSection() {
             </div>
           </motion.div>
 
-          {/* Contact form */}
+          {/* Tally Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="bg-white rounded-3xl p-8 shadow-brand-lg">
+            <div
+              className="bg-white rounded-3xl p-8 shadow-brand-lg"
+              data-ocid="contact.form"
+            >
               <h3 className="font-display font-bold text-2xl text-foreground mb-6">
                 Send a Message
               </h3>
-
-              <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <Label
-                    htmlFor="contact-name"
-                    className="text-sm font-semibold text-foreground mb-2 block"
-                  >
-                    Your Name
-                  </Label>
-                  <Input
-                    id="contact-name"
-                    type="text"
-                    placeholder="Jane Smith"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="rounded-xl border-border focus:border-brand-blue focus:ring-brand-blue"
-                    required
-                    data-ocid="contact.name_input"
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="contact-property"
-                    className="text-sm font-semibold text-foreground mb-2 block"
-                  >
-                    Property Name
-                  </Label>
-                  <Input
-                    id="contact-property"
-                    type="text"
-                    placeholder="Sunrise Condos"
-                    value={property}
-                    onChange={(e) => setProperty(e.target.value)}
-                    className="rounded-xl border-border focus:border-brand-blue focus:ring-brand-blue"
-                    required
-                    data-ocid="contact.property_input"
-                  />
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="contact-message"
-                    className="text-sm font-semibold text-foreground mb-2 block"
-                  >
-                    Message
-                  </Label>
-                  <Textarea
-                    id="contact-message"
-                    placeholder="Tell us about your property and what you need..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    rows={4}
-                    className="rounded-xl border-border focus:border-brand-blue focus:ring-brand-blue resize-none"
-                    required
-                    data-ocid="contact.message_textarea"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={mutation.isPending}
-                  className="w-full rounded-full bg-brand-blue text-white hover:bg-brand-blue-dark font-bold py-3 text-base shadow-brand-sm transition-all duration-200"
-                  data-ocid="contact.submit_button"
-                >
-                  {mutation.isPending ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                      Sending...
-                    </span>
-                  ) : (
-                    "Send Message"
-                  )}
-                </Button>
-
-                {/* Success state */}
-                <AnimatePresence>
-                  {mutation.isSuccess && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="flex items-start gap-3 bg-brand-green-pale text-brand-green rounded-xl p-4 text-sm font-medium"
-                      data-ocid="contact.success_state"
-                    >
-                      <CheckCircle2
-                        size={18}
-                        className="flex-shrink-0 mt-0.5"
-                      />
-                      <span>
-                        Message sent! We'll get back to you within 24 hours with
-                        your free estimate.
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Error state */}
-                <AnimatePresence>
-                  {mutation.isError && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className="flex items-start gap-3 bg-red-50 text-red-600 rounded-xl p-4 text-sm font-medium"
-                      data-ocid="contact.error_state"
-                    >
-                      <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
-                      <span>
-                        Something went wrong. Please try again or email us
-                        directly at sales.binbuddyinc@outlook.com.
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </form>
+              <iframe
+                data-tally-src="https://tally.so/embed/ODPV9k?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                loading="lazy"
+                width="100%"
+                height="466"
+                frameBorder={0}
+                marginHeight={0}
+                marginWidth={0}
+                title="Contact Form"
+              />
             </div>
           </motion.div>
         </div>
